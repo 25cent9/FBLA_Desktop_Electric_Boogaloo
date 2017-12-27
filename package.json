@@ -1,0 +1,23 @@
+{
+  "name": "FLBA-Electric-Boogaloo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "app": "^0.1.0",
+    "electron": "^1.7.10",
+    "knex": "^0.14.2",
+    "sqlite3": "^3.1.13"
+  },
+  "devDependencies": {
+    "electron-rebuild": "^1.6.0"
+  },
+  "scripts": {
+    "start": "electron .",
+    "rebuild": "electron-rebuild -f -w sqlite3",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
