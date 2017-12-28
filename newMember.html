@@ -2,12 +2,31 @@
 <html>
 <head>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js" ></script>
     <link rel="stylesheet" href="css/photon.min.css"> 
+    <link href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" rel="Stylesheet"></link>
     <style>
         a, u {
             text-decoration: none;
         }
     </style>
+    <script>
+        const electron = require("electron")
+        const ipc = electron.ipcRenderer
+        $(function () {
+            ipc.send("getMeTheSchools");
+            ipc.on("hereAreTheSchools", function (event, schools) {
+                var currentSchools = [];
+                for(var i=0; i<schools.length; i++){
+                    currentSchools.push(schools[i].name);
+                }
+                $("#school_name").autocomplete({
+                    source: currentSchools
+                });
+            })
+        });
+        
+    </script>
     
 </head>
 
@@ -67,10 +86,10 @@
                             <label>Amount Due</label>
                             <input type="number" class="form-control" placeholder="0">
                         </div>
-                        <div class="form-group">
+                        <div class="form-group ui-widget">
                             <h3>School Info</h3>
                             <label>School Name</label>
-                            <input class="form-control" type="text" placeholder="Cool High School">
+                            <input class="form-control" type="text" placeholder="Cool High School" id="school_name">
                             <label>State</label>
                             <input class="form-control" type="text" placeholder="MO" maxlength="2">
                             <label>Grade Level</label>
