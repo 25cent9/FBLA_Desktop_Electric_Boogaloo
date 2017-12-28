@@ -8,20 +8,33 @@ const { app, BrowserWindow, ipcMain } = require("electron")
 var knex = require("knex")({
     client: "sqlite3",
     connection: {
-        filename: "./students.db"
+        filename: "./student.db"
     }
 });
 
 app.on("ready", () => {
-    let mainWindow = new BrowserWindow({ height: 300, width: 800, show: false})
+    let mainWindow = new BrowserWindow({ 
+        height: 400,
+        width: 800,
+        minHeight: 400,
+        minWidth: 800, 
+        show: false})
+    mainWindow.setTitle("FBLA Electric Boogaloo")
     mainWindow.loadURL(`file://${__dirname}/main.html`) 
     mainWindow.once("ready-to-show", () => { mainWindow.show() })
 
-    ipcMain.on("displayDB", function () {
-        let result = knex.select("*").from("Student")
+    ipcMain.on("showAll", (event, args) => {
+        let result = knex.raw("SELECT * FROM Student as S, Attends as A WHERE S.memberID = A.memberID");
         result.then(function(rows){
             mainWindow.webContents.send("resultSent", rows);
-        })
+        });
+    });
+    ipcMain.on("updateMembers", (event, args) => {
+        var querey = "SELECT * FROM Student as S, Attends as A WHERE S.memberID = A.memberID AND A.grade_level = " + args;
+        let result = knex.raw(querey);
+        result.then(function(rows) {
+            mainWindow.webContents.send("gotNewMembers", rows)
+        });
     });
 });
 

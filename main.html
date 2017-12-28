@@ -1,34 +1,41 @@
+<!DOCTYPE html>
 <html>
 <head>
-    <title></title>
-
+    <style>
+        a, u {
+            text-decoration: none;
+        }
+    </style>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <link rel="stylesheet" href="css/photon.min.css">    
-    <!-- Some data testing -->
-    <!-- <script>
-        const electron = require("electron")
-        const ipc = electron.ipcRenderer
-        document.addEventListener("DOMContentLoaded", function(){
-            console.log(ipc);
-            ipc.send("mainWindowLoaded");
-            ipc.on("resultSent", function(evt, result){
-                let resultEl = document.getElementById("result");
-                console.log(result);
-                for(var i = 0; i<result.length; i++){
-                    resultEl.innerHTML += "Name: " + result[i].Fname.toString() + "<br/>"
-                }
-            })
-        })
-    </script> -->
+    
     <script>
-    function displayDB(){
         const electron = require("electron")
         const ipc = electron.ipcRenderer
-        ipc.send("displayDB")
-        ipc.on("resultSent", function (evt, result){
+        document.addEventListener("DOMContentLoaded", function() {
+            ipc.send("showAll")
+            ipc.on("resultSent", function (evt, result){ updateTable(result) });
+        });
+
+        ipc.on("gotNewMembers", (event, members) => { updateTable(members) } )
+
+        function updateMembers(grade){
+            if( grade != 13){
+                ipc.send("updateMembers", grade);
+                document.getElementById("tableTitle").innerHTML = "Grade Level: " + grade;
+            }
+            else{
+                ipc.send("showAll");
+                document.getElementById("tableTitle").innerHTML = "All Members";
+            }
+
+        };
+
+        function updateTable(result){
             let tableBody = document.getElementById("table_body");
             let rowCount = document.getElementById('student_table').rows[0].cells.length
+            tableBody.innerHTML = "";
             for(var i = 0; i<result.length; i++){
-                console.log(result[i])
                 var row = tableBody.insertRow(tableBody.rows.length)
                 var MemberId = row.insertCell(0);
                 var Fname = row.insertCell(1);
@@ -42,20 +49,14 @@
                 Email.innerHTML = result[i].Email;
                 Gender.innerHTML = result[i].Gender;
             }
-        });
-    }
+        }   
     </script>
 </head>
 
 <body>
     
     <div class="window">
-        <header class="toolbar toolbar-header">
-            <h1 class="title">Electric Boogaloo</h1>
-            <div class="toolbar-actions">
-                <button class="btn btn-positive" onclick="displayDB()">Populate </button>
-            </div>
-        </header>
+        
         <div class="window-content">
             <div class="pane-group">
                 <div class="pane-sm sidebar">
@@ -66,6 +67,12 @@
                             <span class="icon icon-users"></span>
                             Members
                         </span>
+                        <a href="newMember.html">
+                        <span class="nav-group-item" href="newMember.html">
+                            <span class="icon icon-user-add"></span>
+                            Add Member
+                        </span>
+                        </a>
                         <span class="nav-group-item">
                             <span class="icon icon-feather"></span>
                             Schools
@@ -73,13 +80,20 @@
                     </div>
                 </div>
                 <div class="pane">
+                    <div class="btn-group">
+                        <button class="btn btn-default" onclick="updateMembers(13)">All Members</button>
+                        <button class="btn btn-default" onclick="updateMembers(9)">Freshmen</button>
+                        <button class="btn btn-default" onclick="updateMembers(10)">Sophmore</button>
+                        <button class="btn btn-default" onclick="updateMembers(11)">Juniors</button>
+                        <button class="btn btn-default" onclick="updateMembers(12)">Seniors</button>
+                    </div>
                     <table class="table-striped" id="student_table">
+                        <caption id="tableTitle">All Members:</caption>
                         <thead id="tableHeader">
                             <tr>
                                <th>MemberID</th>   
                                <th>First Name</th> 
                                <th>Last Name</th> 
-                               <th>Grade Level</th>
                                <th>Email</th>
                                <th>Gender</th>
                             </tr>
@@ -90,6 +104,9 @@
                 </div>
             </div>
             
+        </div>
+        <div class="toolbar toolbar-footer">
+            <h1 class="title">Innocent Niyibizi &copy; 2017</h1>
         </div>
     </div>
 </body>
