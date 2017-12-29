@@ -45,50 +45,75 @@ app.on("ready", () => {
     });
 
     ipcMain.on("getMeTheSchools", (event, args) => {
-        var querey = "SELECT name FROM School";
+        var querey = "SELECT * FROM School";
         let result = knex.raw(querey);
         result.then(function(rows) {
             mainWindow.webContents.send("hereAreTheSchools", rows);
         });
     });
 
-    ipcMain.on("insertMember", (event, member) => {
-        let test = knex("Student").insert([
-            {memberID: member.memberID},
-            {Fname: member.Fname},
-            {Lname: member.Lname},
-            {Gender: member.Gender},
-            {Email: member.Email}
-        ]);
-        // var studentInset = "INSERT INTO Student (memberID, Fname, Lname, Gender, Email) Values ("+member.memberID+", \'"+member.Fname+"\', \'"+member.Lname+"\', \'"+member.Gender+"\', \'"+member.Email+"\' )";
-
-        // var schoolInsert = "INSERT INTO School (name, State) Values ( \'"+member.schoolName+"\', \'"+member.state+"\' )";
-
-        // var attendsInsert = "INSERT INTO Attends (memberID, school_name, grade_level) Values ("+member.memberID+", \'"+member.schoolName+"\', "+member.gradeLevel+")";
-
-        // var memberInsert = "INSERT INTO Membership (memberID, year_joined, active, amount_owed) Values ("+member.memberID+", "+member.year+", "+member.active+", "+member.amountDue+" )";
+    ipcMain.on("insertStudent", (event, member) => {
+        var studentInset = "INSERT INTO Student (memberID, Fname, Lname, Gender, Email) Values ("+member.memberID+", \'"+member.Fname+"\', \'"+member.Lname+"\', \'"+member.Gender+"\', \'"+member.Email+"\' )";
 
         try{
-            /*
-            console.log(studentInset+"\n"+schoolInsert+"\n"+attendsInsert+" \n"+memberInsert);
-            let studentResult = knex.raw(studentInset);
-            let schoolResult = knex.raw(schoolInsert);
-            let attendsResult = knex.raw(attendsInsert)
-            let memberResult = knex.raw(memberInsert);
-
-            console.log(studentResult+"\n"+schoolResult+"\n"+attendsResult+"\n"+memberResult)
-            */
-            test.then(function(rows) {
-                mainWindow.webContents.send("allClear", rows);
+            knex.raw(studentInset).then(function(rows) {
+                mainWindow.webContents.send("studentPassed", rows);
+            }).catch(function(err) {
+                mainWindow.webContents.send("whoops", "Problems inserting person");
+                dialog.showMessageBox({ message: err.toString(), 
+                                        buttons: ["OK"] });
             });
-            console.log(test);
-            
-        }
-        catch(err){
-            dialog.showErrorBox("Insertion Error","There was an error with inserting");
+        }catch(err){
+            dialog.showErrorBox("Insertion Error",err.toString());
             mainWindow.webContents.send("whoops", "You goofed, my dude");
         }
+    });
 
+    ipcMain.on("insertSchool", (event, member) => {
+        var schoolInsert = "INSERT INTO School (name, State) Values ( \'"+member.schoolName+"\', \'"+member.state+"\' )";
+        try{
+            knex.raw(schoolInsert).then(function (rows) {
+                mainWindow.webContents.send("schoolPassed", rows);
+            }).catch(function(err) {
+                dialog.showMessageBox({ message: err.toString(), 
+                                        buttons: ["OK"] });
+            })
+        }catch(err){
+            console.error(err);
+        }
+    });
+
+    ipcMain.on("insertAttends", (event, member) => {
+        var attendsInsert = "INSERT INTO Attends (memberID, school_name, grade_level) Values ("+member.memberID+", \'"+member.schoolName+"\', "+member.gradeLevel+")";
+        try{
+            knex.raw(attendsInsert).then(function (rows) {
+                mainWindow.webContents.send("attendsPassed", rows);
+            }).catch(function(err) {
+                dialog.showMessageBox({ message: err.toString(), 
+                                        buttons: ["OK"] });
+            });
+        }catch(err){
+            console.error(err);
+        }
+    });
+
+    ipcMain.on("insertMember", (event, member) => {
+        var memberInsert = "INSERT INTO Membership (memberID, year_joined, active, amount_owed) Values ("+member.memberID+", "+member.year+", "+member.active+", "+member.amountDue+" )";
+        try{
+            knex.raw(memberInsert).then(function (rows) {
+                mainWindow.webContents.send("memberPassed", rows);
+            }).catch(function(err) {
+                dialog.showMessageBox({ message: err.toString(), 
+                                        buttons: ["OK"] });
+            });
+        }catch(err){
+            console.error(err);
+        }
+    });
+
+    ipcMain.on("weGucci", (event, args) => {
+        dialog.showMessageBox({ message: "Member has been added", 
+                                buttons: ["OK"] });
     });
 });
 

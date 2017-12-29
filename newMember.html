@@ -28,13 +28,14 @@
         }
         const electron = require("electron")
         const ipc = electron.ipcRenderer
-        
+        var allSchools = []
         $(function () {
             ipc.send("getMeTheSchools");
             ipc.on("hereAreTheSchools", function (event, schools) {
                 var currentSchools = [];
                 for(var i=0; i<schools.length; i++){
                     currentSchools.push(schools[i].name);
+                    allSchools.push(schools[i]);
                 }
                 $("#school_name").autocomplete({
                     source: currentSchools
@@ -42,6 +43,38 @@
             });
         });
         
+        function sendData(member){
+            var inTable = false;
+            console.log(inTable);
+            console.log(allSchools);
+            for(var i=0; i<allSchools.length; i++){
+                if(allSchools[i].name == member.schoolName && allSchools[i].State == member.state){
+                    inTable = true;
+                }
+            }
+            console.log(inTable);
+            ipc.send("insertStudent", member);
+            ipc.on("studentPassed", (event, args) => {
+                if(inTable == false){
+                    ipc.send("insertSchool", member);
+                    ipc.on("schoolPassed", (event, args) => {
+                        ipc.send("insertAttends", member);
+                    });
+                }
+                else{
+                    ipc.send("insertAttends", member);
+                }
+                ipc.on("attendsPassed", (event, args) => {
+                    ipc.send("insertMember", member);
+                });
+
+                ipc.on("memberPassed", (event, args) => {
+                    ipc.send("weGucci");
+                    location.reload();
+                });
+            });
+        }
+
         function submitData(){
             var memberID = document.getElementById("member_input").value, fname = document.getElementById("first_input").value, lname = document.getElementById("last_input").value, email = document.getElementById("email_input").value, gender = document.getElementById("gender_input").selectedIndex;
 
@@ -60,15 +93,14 @@
                     amountDue = 0;
                 }
                 let member = new Member(memberID, fname, lname, email, gender, year, active, amountDue, schoolName, state, gradeLevel);
-                ipc.send("insertMember", member);
-                ipc.on("allClear", (event, msg) => {
-                    console.log(msg);
-                });
+                sendData(member);
                 ipc.on("whoops", (event, msg) => {
-                    console.log(msg);
+                    console.error(msg);
                 })
             }
         }
+
+        
     </script>
     
 </head>
