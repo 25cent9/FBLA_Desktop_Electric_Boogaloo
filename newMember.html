@@ -22,7 +22,7 @@
                 this.active = active;
                 this.amountDue = amountDue;
                 this.schoolName = schoolName;
-                this.state = state;
+                this.state = state.toUpperCase();
                 this.gradeLevel = gradeLevel;
             }
         }
@@ -42,10 +42,6 @@
             });
         });
         
-        $("#memberForm").submit(function(e) {
-            e.preventDefault();
-        });
-
         function submitData(){
             var memberID = document.getElementById("member_input").value, fname = document.getElementById("first_input").value, lname = document.getElementById("last_input").value, email = document.getElementById("email_input").value, gender = document.getElementById("gender_input").selectedIndex;
 
@@ -64,6 +60,13 @@
                     amountDue = 0;
                 }
                 let member = new Member(memberID, fname, lname, email, gender, year, active, amountDue, schoolName, state, gradeLevel);
+                ipc.send("insertMember", member);
+                ipc.on("allClear", (event, msg) => {
+                    console.log(msg);
+                });
+                ipc.on("whoops", (event, msg) => {
+                    console.log(msg);
+                })
             }
         }
     </script>
