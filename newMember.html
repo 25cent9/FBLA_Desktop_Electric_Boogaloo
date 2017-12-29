@@ -11,8 +11,24 @@
         }
     </style>
     <script>
+        class Member{
+            constructor(memberID, Fname, Lname, Email, Gender, year, active, amountDue, schoolName, state, gradeLevel){
+                this.memberID = memberID;
+                this.Fname = Fname;
+                this.Lname = Lname;
+                this.Email = Email;
+                this.Gender = Gender;
+                this.year = year;
+                this.active = active;
+                this.amountDue = amountDue;
+                this.schoolName = schoolName;
+                this.state = state;
+                this.gradeLevel = gradeLevel;
+            }
+        }
         const electron = require("electron")
         const ipc = electron.ipcRenderer
+        
         $(function () {
             ipc.send("getMeTheSchools");
             ipc.on("hereAreTheSchools", function (event, schools) {
@@ -23,9 +39,33 @@
                 $("#school_name").autocomplete({
                     source: currentSchools
                 });
-            })
+            });
         });
         
+        $("#memberForm").submit(function(e) {
+            e.preventDefault();
+        });
+
+        function submitData(){
+            var memberID = document.getElementById("member_input").value, fname = document.getElementById("first_input").value, lname = document.getElementById("last_input").value, email = document.getElementById("email_input").value, gender = document.getElementById("gender_input").selectedIndex;
+
+            var year = document.getElementById("year_input").value, active = document.getElementById("active_input").selectedIndex, amountDue = document.getElementById("amount_input").value;
+
+            var schoolName = document.getElementById("school_name").value, state = document.getElementById("state_input").value, gradeLevel = document.getElementById("grade_input").selectedIndex;
+
+            if(memberID == "" || fname == "" || lname == "" || email == "" || 
+                year == "" || schoolName == "" || state == ""){
+                ipc.send("anError", "One or more field is empty!");
+            }
+            else{
+                gender = document.getElementById("gender_input").options[gender].value;
+                gradeLevel = document.getElementById("grade_input").options[gradeLevel].value; 
+                if(amountDue == "" ){
+                    amountDue = 0;
+                }
+                let member = new Member(memberID, fname, lname, email, gender, year, active, amountDue, schoolName, state, gradeLevel);
+            }
+        }
     </script>
     
 </head>
@@ -50,61 +90,57 @@
                             <span class="icon icon-user-add"></span>
                             Add Member
                         </span>
-                        <span class="nav-group-item">
-                            <span class="icon icon-feather"></span>
-                            Schools
-                        </span>
                     </div>
                 </div>
                 <div class="pane">
-                    <form style="padding-left: 25%; padding-right: 25%; padding-bottom: 5%">
+                    <div style="padding-left: 25%; padding-right: 25%; padding-bottom: 5%" id = "memberForm" class="ui-widget">
                         <h3>Student Info</h3>
                         <div class="form-group">
                             <label>Member ID</label>
-                            <input type="number" class="form-control" placeholder="123456">
+                            <input type="number" class="form-control" placeholder="123456" id="member_input">
                             <label>First Name</label>
-                            <input type="text" class="form-control" placeholder="First Name">
+                            <input type="text" class="form-control" placeholder="First Name" id="first_input">
                             <label>Last Name</label>
-                            <input type="text" class="form-control" placeholder="Last Name">
+                            <input type="text" class="form-control" placeholder="Last Name" id="last_input">
                             <label>Email</label>
-                            <input type="email" class="form-control" placeholder="fnamelname@mail.com">
+                            <input type="email" class="form-control" placeholder="fnamelname@mail.com" id="email_input">
                             <label>Gender</label>
-                            <select class="form-control">
-                                <option>F</option>
+                            <select class="form-control" id="gender_input">
                                 <option>M</option>
+                                <option>F</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <h3>Membership Info</h3>
                             <label>Year Joined</label>
-                            <input class="form-control" type="number" placeholder="2017">
+                            <input class="form-control" type="number" placeholder="2017" id="year_input">
                             <label>Active</label>
-                            <select class="form-control">
-                                <option>Yes</option>
+                            <select class="form-control" id="active_input">
                                 <option>No</option>
+                                <option>Yes</option>
                             </select>
                             <label>Amount Due</label>
-                            <input type="number" class="form-control" placeholder="0">
+                            <input type="number" class="form-control" placeholder="0" id="amount_input">
                         </div>
-                        <div class="form-group ui-widget">
+                        <div class="form-group">
                             <h3>School Info</h3>
                             <label>School Name</label>
                             <input class="form-control" type="text" placeholder="Cool High School" id="school_name">
                             <label>State</label>
-                            <input class="form-control" type="text" placeholder="MO" maxlength="2">
+                            <input class="form-control" type="text" placeholder="MO" maxlength="2" id="state_input">
                             <label>Grade Level</label>
-                            <select class="form-control">
+                            <select class="form-control" id="grade_input">
                                 <option>9</option>
                                 <option>10</option>
                                 <option>11</option>
                                 <option>12</option>
                             </select>
                         </div>
-                        <div class="form-actions">
-                            <button type="submit" class="btn btn-form btn-default">Clear</button>
-                            <button type="submit" class="btn btn-form btn-primary">Submit</button>
+                        <div>
+                            <button class="btn btn-form btn-default">Clear</button>
+                            <button class="btn btn-form btn-primary" onclick="submitData()">Submit</button>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
             

@@ -3,7 +3,7 @@
 // var BrowserWindow = electron.BrowserWindow;
 // const ipcMain = require("electron");
 
-const { app, BrowserWindow, ipcMain } = require("electron")
+const { app, BrowserWindow, ipcMain, dialog } = require("electron")
 
 var knex = require("knex")({
     client: "sqlite3",
@@ -22,6 +22,11 @@ app.on("ready", () => {
     mainWindow.setTitle("FBLA Electric Boogaloo")
     mainWindow.loadURL(`file://${__dirname}/main.html`) 
     mainWindow.once("ready-to-show", () => { mainWindow.show() })
+
+    ipcMain.on("anError", (event, args) => {
+        dialog.showErrorBox("An error", args);
+
+    });
 
     ipcMain.on("showAll", (event, args) => {
         let result = knex.raw("SELECT * FROM Student as S, Attends as A WHERE S.memberID = A.memberID ORDER BY S.Lname");
