@@ -41,11 +41,11 @@
             for(var i = 0; i<result.length; i++){
                 var row = tableBody.insertRow(tableBody.rows.length)
                 var MemberId = row.insertCell(0);
-                var Highschool = row.insertCell(1);
-                var Fname = row.insertCell(2);
-                var Lname = row.insertCell(3);
+                var Fname = row.insertCell(1);
+                var Lname = row.insertCell(2);
+                var Gender = row.insertCell(3);
                 var Email = row.insertCell(4);
-                var Gender = row.insertCell(5);
+                var Highschool = row.insertCell(5);
 
                 MemberId.innerHTML = result[i].memberID;
                 Fname.innerHTML = result[i].Fname;
@@ -67,37 +67,48 @@
                 <div class="pane-sm sidebar">
                     <div class="pane">
                         <!-- Icons -->
-                        <h5 class="nav-group-title">Navigation</h5>
-                        <span class="nav-group-item active">
-                            <span class="icon icon-users"></span>
-                            Members
-                        </span>
-                        <a href="newMember.html">
-                        <span class="nav-group-item">
-                            <span class="icon icon-user-add"></span>
-                            Add Member
-                        </span>
-                        </a>
+                        <nav class="nav-group">
+                            <h5 class="nav-group-title">Navigation</h5>
+                            <span class="nav-group-item active">
+                                <span class="icon icon-users"></span>
+                                Members
+                            </span>
+                            <a href="newMember.html">
+                            <span class="nav-group-item">
+                                <span class="icon icon-user-add"></span>
+                                Add Member
+                            </span>
+                            </a>
+                            <h5 class="nav-group-title">Grade Levels</h5>
+                            <a class="nav-group-item" onclick="updateMembers(13)">
+                                All Members
+                            </a>
+                            <a class="nav-group-item" onclick="updateMembers(9)">
+                                Freshmen
+                            </a>
+                            <a class="nav-group-item" onclick="updateMembers(10)">
+                                Sophmores
+                            </a>
+                            <a class="nav-group-item" onclick="updateMembers(11)">
+                                Juniors
+                            </a>
+                            <a class="nav-group-item" onclick="updateMembers(12)">
+                                Seniors
+                            </a>
+                        </nav>
                     </div>
                 </div>
-                <div class="pane">
-                    <div class="btn-group">
-                        <button class="btn btn-default" onclick="updateMembers(13)">All Members</button>
-                        <button class="btn btn-default" onclick="updateMembers(9)">Freshmen</button>
-                        <button class="btn btn-default" onclick="updateMembers(10)">Sophmore</button>
-                        <button class="btn btn-default" onclick="updateMembers(11)">Juniors</button>
-                        <button class="btn btn-default" onclick="updateMembers(12)">Seniors</button>
-                    </div>
+                <div class="pane ui-widget">
                     <table class="table-striped" id="student_table">
-                        <caption id="tableTitle">All Members:</caption>
+                        <caption id="tableTitle">All Members</caption>
                         <thead id="tableHeader">
                             <tr>
                                <th>MemberID</th>   
-                               <th>School</th>
                                <th>First Name</th> 
                                <th>Last Name</th> 
-                               <th>Email</th>
                                <th>Gender</th>
+                               <th>Email</th>
+                               <th>School</th>
                             </tr>
                         </thead>
                         <tbody id="table_body">

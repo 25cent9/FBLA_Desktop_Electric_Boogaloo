@@ -69,8 +69,8 @@
                 });
 
                 ipc.on("memberPassed", (event, args) => {
-                    ipc.send("weGucci");
-                    location.reload();
+                    ipc.send("weGucci", member);
+                    clearInput();
                 });
             });
         }
@@ -100,6 +100,18 @@
             }
         }
 
+        function clearInput(){
+            document.getElementById("member_input").value = "";
+            document.getElementById("first_input").value = "";
+            document.getElementById("last_input").value = "";
+            document.getElementById("email_input").value = "";
+
+            document.getElementById("year_input").value = "";
+            document.getElementById("amount_input").value = "";
+
+            document.getElementById("school_name").value = "";
+            document.getElementById("state_input").value = "";
+        }
         
     </script>
     
@@ -148,7 +160,7 @@
                         <div class="form-group">
                             <h3>Membership Info</h3>
                             <label>Year Joined</label>
-                            <input class="form-control" type="number" placeholder="2017" id="year_input">
+                            <input class="form-control" type="number" placeholder="2017" id="year_input" maxlength="4">
                             <label>Active</label>
                             <select class="form-control" id="active_input">
                                 <option>No</option>
@@ -172,7 +184,7 @@
                             </select>
                         </div>
                         <div>
-                            <button class="btn btn-form btn-default">Clear</button>
+                            <button class="btn btn-form btn-default" onclick="clearInput()">Clear</button>
                             <button class="btn btn-form btn-primary" onclick="submitData()">Submit</button>
                         </div>
                     </div>
