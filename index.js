@@ -1,9 +1,12 @@
-const { app, BrowserWindow, ipcMain, dialog } = require("electron")
+const { app, BrowserWindow, ipcMain, dialog } = require("electron");
+const path = require("path");
+
+const dbFile = path.join(__dirname, '/student.db').replace('/app.asar', '');
 
 var knex = require("knex")({
     client: "sqlite3",
     connection: {
-        filename: "./student.db"
+        filename: dbFile
     },
     useNullAsDefault: true
 });
@@ -18,7 +21,9 @@ app.on("ready", () => {
     });
     mainWindow.setTitle("FBLA Electric Boogaloo")
     mainWindow.loadURL(`file://${__dirname}/main.html`) 
-    mainWindow.once("ready-to-show", () => { mainWindow.show() })
+    mainWindow.once("ready-to-show", () => { 
+        mainWindow.show();
+    })
     
     //Displaying the error message in a error box
     ipcMain.on("anError", (event, args) => {

@@ -4,21 +4,62 @@
   "main": "index.js",
   "dependencies": {
     "app": "^0.1.0",
-    "electron": "^1.7.10",
     "jquery": "^3.2.1",
     "knex": "^0.14.2",
     "sqlite3": "^3.1.13"
   },
   "devDependencies": {
-    "electron-rebuild": "^1.6.0"
+    "electron-builder": "^19.49.4",
+    "electron-rebuild": "^1.6.0",
+    "electron": "^1.7.10"
   },
   "scripts": {
     "start": "electron .",
     "rebuild": "electron-rebuild -f -w sqlite3",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "pack": "build --dir",
+    "dist": "electron-builder -mwl",
+    "postinstall": "install-app-deps"
+  },
+  "build": {
+    "remoteBuild": "true",
+    "productName": "FBLA Electric Boogaloo",
+    "extraResources": [
+      "student.db"
+    ],
+    "appId": "com.fblamembers.app",
+    "dmg": {
+      "background": "build/background.png",
+      "contents": [
+        {
+          "x": 100,
+          "y": 150
+        },
+        {
+          "x": 240,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "mac": {
+      "icon": "build/icon.icns",
+      "category": "database"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ]
+    },
+    "win": {
+      "target": "NSIS",
+      "icon": "build/icon.ico"
+    }
   },
   "keywords": [],
-  "author": "Innocent Niyibizi",
+  "author": "Innocent Niyibizi <5cent9@gmail.com>",
   "license": "ISC",
-  "description": ""
+  "description": "FBLA Desktop App Electric Boogaloo"
 }
